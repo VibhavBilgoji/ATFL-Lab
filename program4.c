@@ -55,18 +55,16 @@ int main() {
     while (true) {
         char input[100];
         char output_gen[100] = {0};
+        char lambda_seq[1000] = {0};
         printf("\n--------------------------------\n");
         printf("Enter input string: ");
         scanf("%s", input);
 
-        printf("\nSteps:\n");
         int curr = start_state_num;
         int len = strlen(input);
+        int valid = 1;
 
         for (int i = 0; i < len; i++) {
-            print_nesting(curr, input + i);
-            printf("\n");
-
             int sym_idx = -1;
             for (int k = 0; k < symbols; k++) {
                 if (alphabet[k] == input[i]) {
@@ -77,18 +75,23 @@ int main() {
 
             if (sym_idx == -1) {
                 printf("\nError: Symbol '%c' not in alphabet\n", input[i]);
+                valid = 0;
                 break;
             }
 
-            printf("\t  ↳ λ(q%d, %c) = %c\n", curr, input[i], table[curr][sym_idx].output);
+            char buf[64];
+            snprintf(buf, sizeof(buf), "λ(q%d, %c)", curr, input[i]);
+            strncat(lambda_seq, buf, sizeof(lambda_seq) - strlen(lambda_seq) - 1);
 
             output_gen[i] = table[curr][sym_idx].output;
             output_gen[i+1] = '\0';
             curr = table[curr][sym_idx].next_state;
         }
 
-        print_nesting(curr, "");
-        printf("\n\nFinal Output String: %s\n", output_gen);
+        if (valid) {
+            printf("= %s\n", lambda_seq);
+            printf("= %s\n", output_gen);
+        }
 
         printf("\nContinue? (1=Yes, 0=No): ");
         int choice;
