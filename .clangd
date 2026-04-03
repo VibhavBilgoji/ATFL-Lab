@@ -1,0 +1,12 @@
+# C++ Files
+If:
+    PathMatch: [.*\.cpp, .*\.hpp, .*\.cc, .*\.hh]
+CompileFlags:
+    Add: [-std=c++23]
+
+---
+# C Files
+If:
+    PathMatch: [.*\.c, .*\.h]
+CompileFlags:
+    Add: [-std=c23]
