@@ -66,6 +66,14 @@ void replace_rightmost(const char* current, char var, const char* rhs, char* nex
     next[j] = '\0';
 }
 
+int count_terminals(const char* s) {
+    int cnt = 0;
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (!is_var(s[i])) cnt++;
+    }
+    return cnt;
+}
+
 bool solve_lmd(char* current, char* target, int depth, char path[][MAX_LEN], int* path_len) {
     if (depth > MAX_DEPTH) return false;
 
@@ -87,12 +95,16 @@ bool solve_lmd(char* current, char* target, int depth, char path[][MAX_LEN], int
         return false;
     }
 
-    if (strlen(current) > strlen(target) + MAX_DEPTH) return false;
+    int target_terms = count_terminals(target);
+    int curr_terms = count_terminals(current);
+    if (curr_terms > target_terms) return false; // too many terminals already
 
     for (int i = 0; i < num_prods; i++) {
         if (P[i].lhs == first_var) {
             char next[MAX_LEN];
             replace_leftmost(current, first_var, P[i].rhs, next);
+            // quick pruning: if next has more terminals than target, skip
+            if (count_terminals(next) > target_terms) continue;
             strcpy(path[depth + 1], next);
             if (solve_lmd(next, target, depth + 1, path, path_len)) {
                 return true;
@@ -123,12 +135,15 @@ bool solve_rmd(char* current, char* target, int depth, char path[][MAX_LEN], int
         return false;
     }
 
-    if (strlen(current) > strlen(target) + MAX_DEPTH) return false;
+    int target_terms = count_terminals(target);
+    int curr_terms = count_terminals(current);
+    if (curr_terms > target_terms) return false;
 
     for (int i = 0; i < num_prods; i++) {
         if (P[i].lhs == last_var) {
             char next[MAX_LEN];
             replace_rightmost(current, last_var, P[i].rhs, next);
+            if (count_terminals(next) > target_terms) continue;
             strcpy(path[depth + 1], next);
             if (solve_rmd(next, target, depth + 1, path, path_len)) {
                 return true;
