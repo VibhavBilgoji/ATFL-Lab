@@ -1,0 +1,100 @@
+Enter number of transitions: 7
+Enter start state (e.g., 0 for q0): 0
+Enter start stack symbol: Z
+Enter number of final states: 1
+Enter the final states (space-separated): 1
+
+Enter transitions. Use 'e' for λ (epsilon/empty string).
+
+Transition 1
+Current State (e.g., 0): 0
+Input Symbol (char or 'e'): a
+Stack Symbol to pop (char): Z
+How many outcomes for δ(q0, a, Z)? 2
+  Outcome 1 - Next State: 0
+  Outcome 1 - String to push (or 'e'): XXZ
+  Outcome 2 - Next State: 0
+  Outcome 2 - String to push (or 'e'): XXXZ
+
+Transition 2
+Current State (e.g., 0): 0
+Input Symbol (char or 'e'): a
+Stack Symbol to pop (char): X
+How many outcomes for δ(q0, a, X)? 2
+  Outcome 1 - Next State: 0
+  Outcome 1 - String to push (or 'e'): XXX
+  Outcome 2 - Next State: 0
+  Outcome 2 - String to push (or 'e'): XXXX
+
+Transition 3
+Current State (e.g., 0): 0
+Input Symbol (char or 'e'): a
+Stack Symbol to pop (char): B
+How many outcomes for δ(q0, a, B)? 2
+  Outcome 1 - Next State: 0
+  Outcome 1 - String to push (or 'e'): X
+  Outcome 2 - Next State: 0
+  Outcome 2 - String to push (or 'e'): XX
+
+Transition 4
+Current State (e.g., 0): 0
+Input Symbol (char or 'e'): b
+Stack Symbol to pop (char): Z
+How many outcomes for δ(q0, b, Z)? 1
+  Outcome 1 - Next State: 0
+  Outcome 1 - String to push (or 'e'): BZ
+
+Transition 5
+Current State (e.g., 0): 0
+Input Symbol (char or 'e'): b
+Stack Symbol to pop (char): B
+How many outcomes for δ(q0, b, B)? 1
+  Outcome 1 - Next State: 0
+  Outcome 1 - String to push (or 'e'): BB
+
+Transition 6
+Current State (e.g., 0): 0
+Input Symbol (char or 'e'): b
+Stack Symbol to pop (char): X
+How many outcomes for δ(q0, b, X)? 1
+  Outcome 1 - Next State: 0
+  Outcome 1 - String to push (or 'e'): e
+
+Transition 7
+Current State (e.g., 0): 0
+Input Symbol (char or 'e'): e
+Stack Symbol to pop (char): Z
+How many outcomes for δ(q0, e, Z)? 1
+  Outcome 1 - Next State: 1
+  Outcome 1 - String to push (or 'e'): Z
+
+--------------------------------
+Enter input string (or 'e' for empty string): babba
+
+Instantaneous Description (Trace):
+(q0, babba, Z) ⊢ (q0, abba, BZ)
+               ⊢ (q0, bba, XZ)
+               ⊢ (q0, ba, Z)
+               ⊢ (q0, a, BZ)
+               ⊢ (q0, λ, XZ)
+
+String Rejected!
+
+Continue? (1=Yes, 0=No): 1
+
+--------------------------------
+Enter input string (or 'e' for empty string): babbabb
+
+Instantaneous Description (Trace):
+(q0, babbabb, Z) ⊢ (q0, abbabb, BZ)
+                 ⊢ (q0, bbabb, XZ)
+                 ⊢ (q0, babb, Z)
+                 ⊢ (q0, abb, BZ)
+                 ⊢ (q0, bb, XXZ)
+                 ⊢ (q0, b, XZ)
+                 ⊢ (q0, λ, Z)
+                 ⊢ (q1, λ, Z)
+
+String Accepted!
+
+Continue? (1=Yes, 0=No): 0
