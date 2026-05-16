@@ -1,5 +1,4 @@
 #include <stdio.h>
-// #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <windows.h>
@@ -136,20 +135,28 @@ void print_saved_path() {
            saved_path[0].stack[0] ? saved_path[0].stack : "\xCE\xBB");
 
     if (saved_path_len > 1) {
-        printf("\xE2\x8A\xA2 (q%d, %s, %s)\n",
-               saved_path[1].state,
-               saved_path[1].input[0] ? saved_path[1].input : "\xCE\xBB",
+        printf("\xE2\x8A\xA2 (q%d, %s, %s)\n", 
+               saved_path[1].state, 
+               saved_path[1].input[0] ? saved_path[1].input : "\xCE\xBB", 
                saved_path[1].stack[0] ? saved_path[1].stack : "\xCE\xBB");
-
+               
         for (int i = 2; i < saved_path_len; i++) {
             for (int s = 0; s < indent_spaces; s++) printf(" ");
-            printf("\xE2\x8A\xA2 (q%d, %s, %s)\n",
-                   saved_path[i].state,
-                   saved_path[i].input[0] ? saved_path[i].input : "\xCE\xBB",
+            printf("\xE2\x8A\xA2 (q%d, %s, %s)\n", 
+                   saved_path[i].state, 
+                   saved_path[i].input[0] ? saved_path[i].input : "\xCE\xBB", 
                    saved_path[i].stack[0] ? saved_path[i].stack : "\xCE\xBB");
         }
     } else {
         printf("\n");
+    }
+
+    int last_state = saved_path[saved_path_len - 1].state;
+    for (int s = 0; s < indent_spaces + 3; s++) printf(" ");
+    if (is_accept_state(last_state)) {
+        printf("q%d \xE2\x88\x88 F\n", last_state);
+    } else {
+        printf("q%d \xE2\x88\x89 F\n", last_state);
     }
 }
 
@@ -223,9 +230,9 @@ int main() {
         print_saved_path();
 
         if (is_accepted) {
-            printf("\nString Accepted!\n");
+            printf("\n∴String Accepted!\n");
         } else {
-            printf("\nString Rejected!\n");
+            printf("\n∴String Rejected!\n");
         }
 
         printf("\nContinue? (1=Yes, 0=No): ");
