@@ -38,9 +38,7 @@ int saved_path_len = 0;
 bool path_saved = false;
 
 bool is_accept_state(int state) {
-    for (int i = 0; i < num_accept_states; i++) {
-        if (accept_states[i] == state) return true;
-    }
+    for (int i = 0; i < num_accept_states; i++) if (accept_states[i] == state) return true;
     return false;
 }
 
@@ -53,9 +51,7 @@ bool simulate(int state, const char* remaining_input, const char* stack, int dep
     // Acceptance by final state when input is exhausted
     if (remaining_input[0] == '\0' && is_accept_state(state)) {
         // If accepted, overwrite the saved path with the successful path
-        for (int i = 0; i <= depth; i++) {
-            saved_path[i] = current_path[i];
-        }
+        for (int i = 0; i <= depth; i++) saved_path[i] = current_path[i];
         saved_path_len = depth + 1;
         return true;
     }
@@ -107,9 +103,7 @@ bool simulate(int state, const char* remaining_input, const char* stack, int dep
 
     // If we couldn't make any more moves and haven't saved a rejected path yet, save this one.
     if (!moved && !path_saved) {
-        for (int i = 0; i <= depth; i++) {
-            saved_path[i] = current_path[i];
-        }
+        for (int i = 0; i <= depth; i++) saved_path[i] = current_path[i];
         saved_path_len = depth + 1;
         path_saved = true;
     }
@@ -135,29 +129,24 @@ void print_saved_path() {
            saved_path[0].stack[0] ? saved_path[0].stack : "\xCE\xBB");
 
     if (saved_path_len > 1) {
-        printf("\xE2\x8A\xA2 (q%d, %s, %s)\n", 
-               saved_path[1].state, 
-               saved_path[1].input[0] ? saved_path[1].input : "\xCE\xBB", 
+        printf("\xE2\x8A\xA2 (q%d, %s, %s)\n",
+               saved_path[1].state,
+               saved_path[1].input[0] ? saved_path[1].input : "\xCE\xBB",
                saved_path[1].stack[0] ? saved_path[1].stack : "\xCE\xBB");
-               
+
         for (int i = 2; i < saved_path_len; i++) {
             for (int s = 0; s < indent_spaces; s++) printf(" ");
-            printf("\xE2\x8A\xA2 (q%d, %s, %s)\n", 
-                   saved_path[i].state, 
-                   saved_path[i].input[0] ? saved_path[i].input : "\xCE\xBB", 
+            printf("\xE2\x8A\xA2 (q%d, %s, %s)\n",
+                   saved_path[i].state,
+                   saved_path[i].input[0] ? saved_path[i].input : "\xCE\xBB",
                    saved_path[i].stack[0] ? saved_path[i].stack : "\xCE\xBB");
         }
-    } else {
-        printf("\n");
-    }
+    } else printf("\n");
 
     int last_state = saved_path[saved_path_len - 1].state;
     for (int s = 0; s < indent_spaces + 3; s++) printf(" ");
-    if (is_accept_state(last_state)) {
-        printf("q%d \xE2\x88\x88 F\n", last_state);
-    } else {
-        printf("q%d \xE2\x88\x89 F\n", last_state);
-    }
+    if (is_accept_state(last_state)) printf("q%d \xE2\x88\x88 F\n", last_state);
+    else printf("q%d \xE2\x88\x89 F\n", last_state);
 }
 
 int main() {
@@ -179,9 +168,7 @@ int main() {
     scanf("%d", &num_accept_states);
     if (num_accept_states > 0) {
         printf("Enter the final states (space-separated): ");
-        for (int i = 0; i < num_accept_states; i++) {
-            scanf("%d", &accept_states[i]);
-        }
+        for (int i = 0; i < num_accept_states; i++) scanf("%d", &accept_states[i]);
     }
 
     printf("\nEnter transitions. Use 'e' for \xCE\xBB (epsilon/empty string).\n");
@@ -213,9 +200,7 @@ int main() {
         printf("Enter input string (or 'e' for empty string): ");
         scanf("%s", input);
 
-        if (strcmp(input, "e") == 0 || strcmp(input, "E") == 0) {
-            input[0] = '\0';
-        }
+        if (strcmp(input, "e") == 0 || strcmp(input, "E") == 0) input[0] = '\0';
 
         char stack[MAX_STACK] = {0};
         stack[0] = start_stack_sym;
@@ -229,11 +214,8 @@ int main() {
         printf("\nInstantaneous Description (Trace):\n");
         print_saved_path();
 
-        if (is_accepted) {
-            printf("\n∴String Accepted!\n");
-        } else {
-            printf("\n∴String Rejected!\n");
-        }
+        if (is_accepted) printf("\n∴String Accepted!\n");
+        else printf("\n∴String Rejected!\n");
 
         printf("\nContinue? (1=Yes, 0=No): ");
         int choice;
