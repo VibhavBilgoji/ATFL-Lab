@@ -9,7 +9,26 @@ typedef struct {
     int count;
 } Transition;
 
-void print_state_set(bool* states, int num_states) {
+void print_state_set(bool* states, int num_states, bool force_braces) {
+    int count = 0;
+    for (int i = 0; i < num_states; i++) {
+        if (states[i]) count++;
+    }
+
+    if (count == 0) {
+        printf("∅");
+        return;
+    }
+
+    if (count == 1 && !force_braces) {
+        for (int i = 0; i < num_states; i++) {
+            if (states[i]) {
+                printf("q%d", i);
+                return;
+            }
+        }
+    }
+
     printf("{");
     bool first = true;
     for (int i = 0; i < num_states; i++) {
@@ -19,36 +38,10 @@ void print_state_set(bool* states, int num_states) {
             first = false;
         }
     }
-    if (first) printf("∅");
     printf("}");
 }
 
-void print_step(bool* current_active, int num_states, char* remaining) {
-    int len = strlen(remaining);
-    printf("\t= ");
 
-    for (int i = 0; i < len; i++) printf("δ(");
-
-    int active_count = 0;
-    for (int i = 0; i < num_states; i++) if (current_active[i]) active_count++;
-
-    if (active_count > 1 && len > 0) {
-        bool first = true;
-        for (int i = 0; i < num_states; i++) {
-            if (current_active[i]) {
-                if (!first) printf(" ∪ ");
-                printf("δ(q%d, %c)", i, remaining[0]);
-                first = false;
-            }
-        }
-    } else {
-        print_state_set(current_active, num_states);
-        if (len > 0) printf(", %c)", remaining[0]);
-    }
-
-    for (int i = 1; i < len; i++) printf(", %c)", remaining[i]);
-    printf("\n");
-}
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);
@@ -91,26 +84,37 @@ int main() {
         bool* current_active = (bool*)calloc(num_states, sizeof(bool));
         current_active[0] = true;
 
-        printf("\nSteps:\n");
-        printf("δ*({q0}, %s)\n", input);
+        printf("\nstring %s\n", input);
 
         int input_len = strlen(input);
-        for (int i = 0; i <= input_len; i++) {
-            print_step(current_active, num_states, input + i);
+        for (int i = 0; i < input_len; i++) {
+            char symbol = input[i];
+            int symbol_idx = symbol - '0'; // Assuming input symbols are '0', '1', etc.
+            if (symbol >= 'a' && symbol <= 'z') {
+                symbol_idx = symbol - 'a';
+            }
 
-            if (i < input_len) {
-                int symbol_idx = input[i] - 'a';
-                bool* next_active = (bool*)calloc(num_states, sizeof(bool));
-                for (int s = 0; s < num_states; s++) {
-                    if (current_active[s]) {
-                        Transition trans = table[s][symbol_idx];
-                        for (int t = 0; t < trans.count; t++)
-                            next_active[trans.targets[t]] = true;
+            bool* next_active = (bool*)calloc(num_states, sizeof(bool));
+            for (int s = 0; s < num_states; s++) {
+                if (current_active[s]) {
+                    Transition trans = table[s][symbol_idx];
+                    for (int t = 0; t < trans.count; t++) {
+                        next_active[trans.targets[t]] = true;
                     }
                 }
-                free(current_active);
-                current_active = next_active;
             }
+
+            // Print the step
+            printf("δ̂(q0, ");
+            for (int j = 0; j <= i; j++) printf("%c", input[j]);
+            printf(") = δ(");
+            print_state_set(current_active, num_states, false);
+            printf(", %c) = ", symbol);
+            print_state_set(next_active, num_states, true);
+            printf("\n");
+
+            free(current_active);
+            current_active = next_active;
         }
 
         bool accepted = false;
@@ -122,8 +126,8 @@ int main() {
             }
         }
 
-        if (accepted) printf("\n : Accepted\n");
-        else printf("\n : Rejected\n");
+        if (accepted) printf("∴ String accepted.\n");
+        else printf("∴ String Rejected.\n");
 
         free(current_active);
         printf("\nContinue? (1=Yes, 0=No): ");
