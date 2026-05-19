@@ -52,11 +52,19 @@ int main() {
     printf("Enter number of symbols: ");
     if(scanf("%d", &num_symbols) != 1) return 1;
 
+    char* alphabet = (char*)malloc(num_symbols * sizeof(char));
+    printf("Enter the alphabet symbols (e.g., ab or 01): ");
+    char alphabet_input[100];
+    scanf("%s", alphabet_input);
+    for(int i = 0; i < num_symbols; i++) {
+        alphabet[i] = alphabet_input[i];
+    }
+
     Transition** table = (Transition**)malloc(num_states * sizeof(Transition*));
     for (int i = 0; i < num_states; i++) {
         table[i] = (Transition*)malloc(num_symbols * sizeof(Transition));
         for (int j = 0; j < num_symbols; j++) {
-            printf("Transitions for q%d on '%c' (count): ", i, 'a' + j);
+            printf("Transitions for q%d on '%c' (count): ", i, alphabet[j]);
             scanf("%d", &table[i][j].count);
             if (table[i][j].count > 0) {
                 table[i][j].targets = (int*)malloc(table[i][j].count * sizeof(int));
@@ -87,11 +95,21 @@ int main() {
         printf("\nstring %s\n", input);
 
         int input_len = strlen(input);
+        bool valid_string = true;
         for (int i = 0; i < input_len; i++) {
             char symbol = input[i];
-            int symbol_idx = symbol - '0'; // Assuming input symbols are '0', '1', etc.
-            if (symbol >= 'a' && symbol <= 'z') {
-                symbol_idx = symbol - 'a';
+            int symbol_idx = -1;
+            for (int k = 0; k < num_symbols; k++) {
+                if (alphabet[k] == symbol) {
+                    symbol_idx = k;
+                    break;
+                }
+            }
+
+            if (symbol_idx == -1) {
+                printf("Error: symbol '%c' is not in the alphabet.\n", symbol);
+                valid_string = false;
+                break;
             }
 
             bool* next_active = (bool*)calloc(num_states, sizeof(bool));
@@ -115,6 +133,11 @@ int main() {
 
             free(current_active);
             current_active = next_active;
+        }
+
+        if (!valid_string) {
+            free(current_active);
+            continue;
         }
 
         bool accepted = false;
@@ -144,6 +167,7 @@ int main() {
     }
     free(table);
     free(finals);
+    free(alphabet);
 
     return 0;
 }
