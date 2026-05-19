@@ -123,7 +123,7 @@ int main() {
             }
 
             // Print the step
-            printf("δ̂(q0, ");
+            printf("δ⃰ (q0, ");
             for (int j = 0; j <= i; j++) printf("%c", input[j]);
             printf(") = δ(");
             print_state_set(current_active, num_states, false);
